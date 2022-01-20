@@ -1,26 +1,73 @@
 import React, {useState} from "react";
 
 const FunctionalComponent = ()=>{
-    const [count, setCount] = useState("This is tab 1")
+    const [newTodo, setNewTodo] = useState("")
+    const [todos, setTodos] = useState([])
 
-    const message1 = () => {
-        setCount("This is tab 1")
-}
+    const handleNewTodoSumbmit = (event) => {
+        event.preventDefault();
 
-    const message2 = () => {
-        setCount("This is tab 2")
-}
+        if(newTodo.length === 0){
+            return;
+        }
 
-    const message3 = () => {
-        setCount("This is tab 3")
-}
+
+        const todoItem = {
+            text: newTodo,
+            complete : false
+        }
+
+        setTodos([...todos, todoItem])
+
+        setNewTodo("")
+
+    }
+
+    const handleToggleComplete = (idx) => {
+        const updatedTodos = todos.map((todo, i)=> {
+            if(idx === i){
+                todo.complete = !todo.complete
+            }
+            return todo; 
+        })
+        setTodos(updatedTodos)
+    }
+
+
+
+    const handleTodoDelete = (delIdx) =>{
+        const filteredTodos = todos.filter((todo, i ) => {
+            return i!==delIdx;
+        })
+        setTodos(filteredTodos);
+    }
+
+
+    
     return(
         <div>
-            <h1>Functional Component</h1>
-            <button onClick={message1}>Tab 1</button>
-            <button onClick={message2}>Tab 2</button>
-            <button onClick={message3}>Tab 3</button>
-            <p>{count}</p>
+            <form onSubmit={(event) => {handleNewTodoSumbmit(event);}}>
+            <input onChange={(event) => setNewTodo(event.target.value)} type="text" value={newTodo}/>
+            <button>Add</button>
+            </form>
+
+        
+
+
+        {todos.map((todo, i )=>
+        {
+            return(
+                <div key={i}>
+                    <input checked={todo.complete} onChange={(event) =>{handleToggleComplete(i)}} type="checkbox" />
+                    <span>{todo.text}</span>
+                    <button onClick={(event) => {handleTodoDelete(i);}}> Delete </button>
+                </div>
+            );
+            }
+            )
+        }
+
+
         </div>
 
     )
